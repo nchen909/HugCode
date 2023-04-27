@@ -1,4 +1,18 @@
-# CodePrompt
+# HugCode（Under Development）
+
+Majored by nchen909
+
+HugNLP friend library. The founder and main developer is [Nuo Chen](https://github.com/nchen909). The collaborators are [Qiushi Sun](https://github.com/QiushiSun) and [Jianing Wang](https://wjn1996.github.io/).
+
+# What we can do
+
+### codePTMs:
+
+full finetuning
+
+parameter_efficient
+
+fewshot learning
 
 ## Environment & Preparing
 
@@ -21,11 +35,6 @@ for cuda11.0+,
 pip install torch==1.7.0+cu110 torchvision==0.8.1+cu110 torchaudio===0.7.0 -f https://download.pytorch.org/whl/torch_stable.html
 ```
 
-for torch geometric,
-
-https://pytorch-geometric.com/whl/torch-1.6.0%2Bcu101.html
-
-
 ## Preparing data
 
 The dataset comes from [CodeXGLUE](https://github.com/microsoft/CodeXGLUE).
@@ -43,7 +52,7 @@ rm data.zip
 
 Direct WORKDIR, HUGGINGFACE_LOCALS in run.sh, run_few_shot.sh to your path.
 
-## Finetune
+## Supported Models and Tasks (Full Finetune)
 
 ```bash
 export MODEL_NAME=
@@ -74,28 +83,20 @@ bash run_multi_task.sh
 | C2T      | CodeSN    | summarize         | ['java', 'python', 'javascript','php','ruby','go'] | end2end        | en2de    | code defect detection in[C/C++ data](https://proceedings.neurips.cc/paper/2019/file/49265d2447bc3bbfe9e76306ce40a31f-Paper.pdf) |
 | T2C      | CONCODE   | generate(concode) | [] (java)                                          | end2end        | en2de    | code clone detection in[Java data](https://arxiv.org/pdf/2002.08653.pdf)                                                        |
 
-## 所有消融脚本
+## Scripts
 
-### parameter_efficient消融（只t5&bart）
+### codePTMs full finetuning
 
-run.sh（full finetuning）
+run.sh
+
+### parameter_efficient
 
 run_adapter.sh
 
 run_bitfit.sh
 
-### prefix结构消融
+run_prefix_tuning.sh
 
-run_prefix_tuning.sh (MLP)
+### fewshot learning
 
-run_gcn_tuning.sh (GCN)
-
-run_pass_tuning.sh (GAT)
-
-### 初始化
-
-run_random_selection.sh (without retriving)
-
-### 或许要调的
-
-gat_token_num
+run_few_shot.sh

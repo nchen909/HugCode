@@ -27,14 +27,14 @@ def add_args(parser):
     parser.add_argument("--res_dir", type=str, default='results',
                         help='directory to save fine-tuning results')
     parser.add_argument("--res_fn", type=str, default='')
-    parser.add_argument("--model_dir", type=str, default='saved_models',
-                        help='directory to save fine-tuned models')
+    # parser.add_argument("--model_dir", type=str, default='saved_models',
+    #                     help='directory to save fine-tuned models')
     parser.add_argument("--summary_dir", type=str, default='tensorboard',
                         help='directory to save tensorboard summary')
     parser.add_argument("--data_num", type=int, default=-1,
                         help='number of data instances to use, -1 for full data')
-    parser.add_argument("--gpu", type=int, default=0,
-                        help='index of the gpu to use in a cluster')
+    # parser.add_argument("--gpu", type=int, default=0,
+    #                     help='index of the gpu to use in a cluster')
     parser.add_argument("--data_dir", default='data', type=str)
     parser.add_argument("--output_dir", default='outputs', type=str,
                         help="The output directory where the model predictions and checkpoints will be written.")
@@ -75,6 +75,10 @@ def add_args(parser):
                         help="Batch size per GPU/CPU for testing.")
     parser.add_argument("--attention_batch_size", default=100, type=int,
                         help="Batch size per GPU/CPU for computing attention.")
+    parser.add_argument("--max_source_length", default=320, type=int,
+                        help="max_source_length")
+    parser.add_argument("--max_target_length", default=150, type=int,
+                        help="max_target_length")
     parser.add_argument("--is_clone_sample", default=0, type=int,
                         help="clone&defect data is large, 0 for not sample and 1 for sample")                    
     # parser.add_argument('--layer_num', type=int, default=-1,
@@ -91,7 +95,7 @@ def add_args(parser):
     parser.add_argument("--prefix_tuning", default=False, type=str,
                     help="parameter-efficient prefix tuning, pass_tuning refers to GAT prefix,\
                     GCN refers to GCN prefix,prefix_tuning refers to MLP prefix",\
-                        choices=['pass_tuning','GCN' ,'prefix_tuning', 'False'])
+                        choices=['pass_tuning','GCN' ,'prefix_tuning', False])
     parser.add_argument("--adapter_tuning", default=0, type=int,
                     help="parameter-efficient adapter tuning, 0 for not tuning, 1 for tuning")#only support codet5 currently
     parser.add_argument("--bitfit", default=0, type=int,
@@ -110,7 +114,7 @@ def add_args(parser):
                     help="when prefix_tuning, fix model param or not ")
     
     parser.add_argument("--knowledge_usage", default='separate', type=str,
-                        help="for t5&bart, how knowledge prefix use: separate or concatenate")
+                        help="for t5&bart, how knowledge prefix use: separate or concatenate",choices=['separate','concatenate'])
     parser.add_argument("--use_description", default=0, type=int,
                     help="use_description or not ")
     parser.add_argument("--concatenate_description", default=0, type=int,
@@ -122,11 +126,8 @@ def add_args(parser):
     parser.add_argument("--retriever_mode", default='retrieve', type=str,
                         help="how to retrieve code piece to init GAT, choose from random or retrieve",
                         choices=['random', 'retrieve','old'])
-    parser.add_argument("--qiangtamadeka", default=0, type=int,
-                    help="qiangtamadeka or not ")
     parser.add_argument("--adjcency_mode", default='sast', type=str,
                     help="how code distance matrix input as GAT adjcency matrix",choices=['fully-connected','sast'])
-    #######################注意改成真随机！！！！！！
     args = parser.parse_args()
     return args
 
@@ -160,132 +161,4 @@ def set_seed(args):
 
 
 def set_hyperparas(args):
-    if args.qiangtamadeka:
-        args.few_shot = -1
-
-    args.adam_epsilon = 1e-8
-    args.beam_size = 10
-    args.gradient_accumulation_steps = 1
-    args.weight_decay = 0.0
-    if args.model_name in ['t5', 'codet5']:
-        lr=2e-5
-    elif args.model_name in ['bart', 'plbart','unixcoder']:
-        lr=2e-5# 5e-5
-    elif args.model_name in ['graphcodebert']:
-        lr=2e-5# 5e-5(in repo)#1e-4(in plbartpaper)
-    if args.task == 'summarize':
-        args.data_num = args.few_shot if args.few_shot > 0 else -1
-        args.lr = lr if not args.prefix_tuning else 1e-4#2e-3
-        args.max_source_length = 256
-        args.max_target_length = 128
-    elif args.task == 'translate':
-        args.data_num = args.few_shot if args.few_shot > 0 else -1
-        if args.model_name in ['t5', 'codet5'] and args.sub_task == 'java-cs':
-            args.lr = lr if not args.prefix_tuning else 5e-4#0224#2e-3
-        else:
-            args.lr = lr if not args.prefix_tuning else 1e-4#0224#2e-3
-        args.max_source_length = 320
-        args.max_target_length = 256
-    elif args.task == 'refine':
-        args.data_num = args.few_shot if args.few_shot > 0 else -1
-        args.lr = lr if not args.prefix_tuning else 1e-4#0224#2e-3
-        if args.sub_task == 'small':
-            args.max_source_length = 130
-            args.max_target_length = 120
-        else:
-            args.max_source_length = 240
-            args.max_target_length = 240
-    elif args.task == 'generate':
-        args.data_num = args.few_shot if args.few_shot > 0 else -1
-        args.lr = lr if not args.prefix_tuning else 5e-4#0224#2e-3
-        args.max_source_length = 320
-        args.max_target_length = 150
-    elif args.task == 'complete':
-        args.data_num = args.few_shot if args.few_shot > 0 else -1
-        args.lr = 1e-5 if not args.prefix_tuning else 1e-4#1e-3
-        args.max_source_length = 256
-        args.max_target_length = 256
-    elif args.task == 'defect':
-        args.data_num = args.few_shot * 2 if args.few_shot > 0 else -1
-        args.lr = 8e-6 if not args.prefix_tuning else 5e-4#0224 #8e-6#8e-4
-        args.max_source_length = 512
-        args.max_target_length = 3  # as do not need to add lang ids
-    elif args.task == 'clone':
-        args.data_num = args.few_shot * 2 if args.few_shot > 0 else -1 
-        args.lr = lr if not args.prefix_tuning else 1e-4
-        args.max_source_length = 512#512#400
-        args.max_target_length = 512#512#400
-
-    if args.few_shot == -1:
-        if args.task in ['clone']:
-            args.num_train_epochs = 2 if not args.prefix_tuning else 1# if not torch.cuda.is_available() else 2*torch.cuda.device_count()//2
-            #for clone BCB full data!!!
-            if args.is_clone_sample:
-                args.num_train_epochs = args.num_train_epochs * 10
-            args.patience = args.num_train_epochs*1000#min( 10, args.num_train_epochs//5*5)
-        elif args.task in ['defect']:
-            args.num_train_epochs = 120 if not args.prefix_tuning else 120 #old40 #if not torch.cuda.is_available() else 10*torch.cuda.device_count()//2*2
-            # if args.is_clone_sample:
-            #     args.num_train_epochs = args.num_train_epochs * 10
-            args.patience = args.num_train_epochs*1000#min( 10, args.num_train_epochs//5*5)
-        elif args.task in ['generate','translate','summarize']:
-            args.num_train_epochs = 30 if not torch.cuda.is_available() else 50*torch.cuda.device_count()#60
-            args.patience = min( 10, args.num_train_epochs//5*2)
-        else:#refine
-            args.num_train_epochs = 30 if not torch.cuda.is_available() else 30*torch.cuda.device_count()#60
-            args.patience = min( 10, args.num_train_epochs//5*2)
-        if args.model_name in ['t5', 'codet5']:
-            args.batch_size = 16  if not torch.cuda.is_available() else 16 * torch.cuda.device_count()
-        elif args.model_name in ['bart', 'plbart']:
-            args.batch_size = 32 if not torch.cuda.is_available() else 32 * torch.cuda.device_count()
-        else:
-            args.batch_size = 32 if not torch.cuda.is_available() else 32 * torch.cuda.device_count()
-            if args.task=='refine' or args.task=='generate':
-                args.batch_size *= 2
-        if args.task in ['clone']:#old
-            if args.prefix_tuning:
-                args.batch_size = args.batch_size // 2 #4
-            else:
-                args.batch_size = args.batch_size // 2
-        if args.task in ['summarize','translate','generate']:#3090
-            if args.prefix_tuning:
-                args.batch_size = args.batch_size // 2 #4
-            else:
-                args.batch_size = args.batch_size // 2
-        if args.task in ['translate'] and args.model_name in ['bart', 'plbart']:#3090
-            if args.prefix_tuning:
-                args.batch_size = args.batch_size // 2 #4
-        # args.batch_size //= 4
-        # args.batch_size = 2#####################################################
-        if args.qiangtamadeka:
-            args.batch_size = 8
-            args.num_train_epochs = 10000
-
-        # args.batch_size = 128 if args.model_name not in ['t5', 'codet5'] else 16
-        args.warmup_steps = 1000
-        args.dev_batch_size = args.batch_size * 1 if not torch.cuda.is_available() else args.batch_size//torch.cuda.device_count()*1
-        args.test_batch_size = args.batch_size * 1 if not torch.cuda.is_available() else args.batch_size//torch.cuda.device_count()*1
-        if args.task in ['refine','generate'] and args.model_name in ['bart', 'plbart']:#3090
-            if args.prefix_tuning:
-                args.dev_batch_size = args.dev_batch_size // 2 #4
-                args.test_batch_size = args.test_batch_size // 2
-            else:
-                args.dev_batch_size = args.dev_batch_size // 2
-                args.test_batch_size = args.test_batch_size // 2
-
-    elif args.few_shot < 128: #16,32,64
-        args.num_train_epochs = 64
-        # args.lr =5e-8
-        args.batch_size = 2
-        args.dev_batch_size = args.batch_size
-        args.test_batch_size = args.batch_size
-    elif args.few_shot < 512: #128,256
-        args.num_train_epochs = 48
-        args.batch_size = 4 if args.model_name not in ['t5', 'codet5'] else 4
-        args.dev_batch_size = args.batch_size
-        args.test_batch_size = args.batch_size
-    elif args.few_shot < 2048: #512,1024
-        args.num_train_epochs = 32
-        args.batch_size = 8 if args.model_name not in ['t5', 'codet5'] else 4
-        args.dev_batch_size = args.batch_size
-        args.test_batch_size = args.batch_size
+    pass

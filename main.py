@@ -6,7 +6,7 @@ import multiprocessing
 import os
 import numpy as np
 import math
-
+import json
 from torch.utils.tensorboard import SummaryWriter
 from torch.utils.data import DataLoader, SequentialSampler, RandomSampler
 from torch.utils.data.distributed import DistributedSampler
@@ -456,7 +456,11 @@ def main():
                             model, 'module') else model
                         output_model_file = os.path.join(
                             last_output_dir, "pytorch_model.bin")
+                        config_file = os.path.join(
+                            last_output_dir, "config.json")
                         torch.save(model_to_save.state_dict(), output_model_file)
+                        with open(config_file, "w", encoding="utf-8") as f:
+                            json.dump(model_to_save.config.to_dict(), f, ensure_ascii=False, indent=4)
                         logger.info("Save the last model into %s",
                                     output_model_file)
 
@@ -478,8 +482,11 @@ def main():
                                 model, 'module') else model
                             output_model_file = os.path.join(
                                 output_dir, "pytorch_model.bin")
-                            torch.save(model_to_save.state_dict(),
-                                    output_model_file)
+                            config_file = os.path.join(
+                                output_dir, "config.json")
+                            torch.save(model_to_save.state_dict(), output_model_file)
+                            with open(config_file, "w", encoding="utf-8") as f:
+                                json.dump(model_to_save.config.to_dict(), f, ensure_ascii=False, indent=4)
                             logger.info(
                                 "Save the best ppl model into %s", output_model_file)
                     else:
@@ -529,8 +536,11 @@ def main():
                                     model, 'module') else model
                                 output_model_file = os.path.join(
                                     output_dir, "pytorch_model.bin")
-                                torch.save(model_to_save.state_dict(),
-                                        output_model_file)
+                                config_file = os.path.join(
+                                    output_dir, "config.json")
+                                torch.save(model_to_save.state_dict(), output_model_file)
+                                with open(config_file, "w", encoding="utf-8") as f:
+                                    json.dump(model_to_save.config.to_dict(), f, ensure_ascii=False, indent=4)
                                 logger.info(
                                     "Save the best bleu model into %s", output_model_file)
                         else:
@@ -624,7 +634,11 @@ def main():
                         if True or args.data_num == -1 and args.save_last_checkpoints:
                             model_to_save = model.module if hasattr(model, 'module') else model
                             output_model_file = os.path.join(last_output_dir, "pytorch_model.bin")
+                            config_file = os.path.join(
+                                last_output_dir, "config.json")
                             torch.save(model_to_save.state_dict(), output_model_file)
+                            with open(config_file, "w", encoding="utf-8") as f:
+                                json.dump(model_to_save.config.to_dict(), f, ensure_ascii=False, indent=4)
                             logger.info("Save the last model into %s", output_model_file)
 
                         if eval_acc > best_acc:
@@ -640,7 +654,11 @@ def main():
                             if args.data_num == -1 or True:
                                 model_to_save = model.module if hasattr(model, 'module') else model
                                 output_model_file = os.path.join(output_dir, "pytorch_model.bin")
+                                config_file = os.path.join(
+                                    output_dir, "config.json")
                                 torch.save(model_to_save.state_dict(), output_model_file)
+                                with open(config_file, "w", encoding="utf-8") as f:
+                                    json.dump(model_to_save.config.to_dict(), f, ensure_ascii=False, indent=4)
                                 logger.info("Save the best ppl model into %s", output_model_file)
                         else:
                             not_acc_inc_cnt += 1
@@ -734,7 +752,11 @@ def main():
                         if True or args.data_num == -1 and args.save_last_checkpoints:
                             model_to_save = model.module if hasattr(model, 'module') else model
                             output_model_file = os.path.join(last_output_dir, "pytorch_model.bin")
+                            config_file = os.path.join(
+                                last_output_dir, "config.json")
                             torch.save(model_to_save.state_dict(), output_model_file)
+                            with open(config_file, "w", encoding="utf-8") as f:
+                                json.dump(model_to_save.config.to_dict(), f, ensure_ascii=False, indent=4)
                             logger.info("Save the last model into %s", output_model_file)
 
                         if eval_f1 > best_f1:
@@ -750,7 +772,11 @@ def main():
                             if args.data_num == -1 or True:
                                 model_to_save = model.module if hasattr(model, 'module') else model
                                 output_model_file = os.path.join(output_dir, "pytorch_model.bin")
+                                config_file = os.path.join(
+                                    output_dir, "config.json")
                                 torch.save(model_to_save.state_dict(), output_model_file)
+                                with open(config_file, "w", encoding="utf-8") as f:
+                                    json.dump(model_to_save.config.to_dict(), f, ensure_ascii=False, indent=4)
                                 logger.info("Save the best ppl model into %s", output_model_file)
                         else:
                             not_f1_inc_cnt += 1
