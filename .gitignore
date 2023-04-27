@@ -13,3 +13,5 @@ run_log/
 tree-sitter-*/
 .cache/
 tensorboard/
+.cache_backup/
+scripts/
