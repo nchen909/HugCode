@@ -1,16 +1,14 @@
-# HugCode（Under Development）
+# HugCode (Under Development）
 
-Majored by nchen909
+HugNLP friend library. Developed by Nuo Chen.
 
-HugNLP friend library. The founder and main developer is [Nuo Chen](https://github.com/nchen909). The collaborators are [Qiushi Sun](https://github.com/QiushiSun) and [Jianing Wang](https://wjn1996.github.io/).
+# Capacities (Currently)
 
-# What we can do
-
-### codePTMs:
+CodePTMs:
 
 full finetuning
 
-parameter_efficient
+parameter-efficient learning
 
 fewshot learning
 
@@ -21,10 +19,10 @@ conda create --name cat python=3.7
 conda activate cat
 pip install -r requirements.txt
 git clone https://github.com/nchen909/CodePrompt
-cd CodePrompt/evaluator/CodeBLEU/parser
+cd CodePrompt/metrics/CodeBLEU/parser
 bash build.sh
 cd ../../../
-cp evaluator/CodeBLEU/parser/my-languages.so build/
+cp metrics/CodeBLEU/parser/my-languages.so build/
 #make sure git-lfs installed like 'apt-get install git-lfs'
 bash get_models.sh
 ```
@@ -70,9 +68,7 @@ bash run_multi_task.sh
 
   `TASK` can be any one of `['summarize', 'translate', 'refine', 'generate', 'defect', 'clone']`. (generate refers concode in codexglue, and we don't consider complete)
 
-  `SUB_TASK` can be in picture below
-
-![image-20221014233118653](https://pic.mathskiller909.com/img/20221027202855.png?x-oss-process=style/nchen909)
+  `SUB_TASK` can be in below
 
 | Category | Dataset   | Task              | Sub_task(LANG)                                     | Type           | Category | Description                                                                                                                  |
 | -------- | --------- | ----------------- | -------------------------------------------------- | -------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------- |
@@ -87,7 +83,7 @@ bash run_multi_task.sh
 
 ### codePTMs full finetuning
 
-run.sh
+run_full_finetuning.sh
 
 ### parameter_efficient
 

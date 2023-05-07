@@ -16,9 +16,9 @@ from tqdm import tqdm
 from configs import add_args, set_dist, set_seed, set_hyperparas
 from models import bulid_or_load_gen_model,bulid_or_load_cls_model
 from utils import get_filenames, get_elapse_time, load_and_cache_gen_data, load_and_cache_defect_data,load_and_cache_clone_data, get_lang_by_task
-from evaluator import smooth_bleu
-from evaluator.CodeBLEU import calc_code_bleu
-from evaluator.bleu import _bleu
+from metrics import smooth_bleu
+from metrics.CodeBLEU import calc_code_bleu
+from metrics.bleu import _bleu
 import sys
 from sklearn.metrics import recall_score, precision_score, f1_score
 from tree_sitter import Language, Parser
