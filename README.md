@@ -98,6 +98,6 @@ run_prefix_tuning.sh
 run_few_shot.sh
 
 References
-Nuo Chen, Qiushi Sun, Jianing Wang, Xiang Li, Ming Gao: Pass-Tuning: Towards Structure-Aware Parameter-Efficient Tuning for Code Representation Learning. EMNLP 2022.
-Nuo Chen, Qiushi Sun, Jianing Wang, Xiang Li, Ming Gao: Evaluating and Enhancing the Robustness of Code Pre-trained Modelsthrough Structure-Aware Adversarial Samples Generation. EMNLP 2023.
-Nuo Chen, Qiushi Sun, Renyu Zhu, Xiang Li, Xuesong Lu, Ming Gao: CAT-probing: A Metric-based Approach to Interpret How Pre-trained Models for Programming Language Attend Code Structure. EMNLP 2022.
+1. Nuo Chen, Qiushi Sun, Jianing Wang, Xiang Li, Ming Gao: Pass-Tuning: Towards Structure-Aware Parameter-Efficient Tuning for Code Representation Learning. EMNLP 2022.
+2. Nuo Chen, Qiushi Sun, Jianing Wang, Xiang Li, Ming Gao: Evaluating and Enhancing the Robustness of Code Pre-trained Modelsthrough Structure-Aware Adversarial Samples Generation. EMNLP 2023.
+3. Nuo Chen, Qiushi Sun, Renyu Zhu, Xiang Li, Xuesong Lu, Ming Gao: CAT-probing: A Metric-based Approach to Interpret How Pre-trained Models for Programming Language Attend Code Structure. EMNLP 2022.
